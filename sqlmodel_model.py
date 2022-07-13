@@ -95,7 +95,33 @@ class ElectionDates(SQLModel, table=True):
     election_year: int
     office_sought: Optional[str]
     primary_general_date: Optional[str]
-    update_date: Optional[str]       
+    update_date: Optional[str]  
+    
+    
+class ReportingDates(SQLModel, table=True):
+    __tablename__ = "dates_reporting" 
+    create_date: str
+    due_date: str = Field(default=None, primary_key=True)
+    report_type: str
+    report_type_full: Optional[str]
+    report_year: int
+    update_date: str         
+
+
+class States(SQLModel, table=True):
+    __tablename__ = "states"            
+        
+    state_abbr: Optional[str] = Field(default=None, primary_key=True) 
+    state_name: str = None
+    last_facilities_list_process_dt: datetime = None 
+    last_facilities_detail_process_dt: datetime = None
+    last_file_process_dt: datetime = None 
+    last_file_changes_process_dt: datetime = None
+    last_file_changes_post_process_dt: datetime = None
+    last_pdf_process_dt: datetime = None
+    last_image_process_dt: datetime = None
+    last_post_process_dt: datetime = None
+    
 
 engine = dbc.get_postgres_config() 
 

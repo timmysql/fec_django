@@ -13,10 +13,9 @@ from sqlmodel_model import Candidates
 from sqlmodel import Session, select, or_
 import db_connect as dbc
 from sqlalchemy.exc import IntegrityError
-
+from settings import FEC_API_KEY
 engine = dbc.get_postgres_config()
 
-FEC_API_KEY = "vtR7iSAdFdWJO8kvCNG13ihOP9vIyMnGpheD4LdX"
 
 
 @dataclass

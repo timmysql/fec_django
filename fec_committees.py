@@ -13,10 +13,9 @@ from sqlmodel_model import Committees
 from sqlmodel import Session, select, or_
 import db_connect as dbc
 from sqlalchemy.exc import IntegrityError
+from settings import FEC_API_KEY
 
 engine = dbc.get_postgres_config()
-
-FEC_API_KEY = "vtR7iSAdFdWJO8kvCNG13ihOP9vIyMnGpheD4LdX"
 
 
 @dataclass
@@ -121,55 +120,7 @@ def get_request_params():
             except IntegrityError as ie:
                 pass                     
         
-    # print(pages)
-    # pprint.pprint(results)
-    # return load
 
-# def main():
-#     data = get_request_data()
-#     candidates = []
-#     for y in data:
-#         cand_dict = from_dict(data_class=Candidate, data = y)
-#         candidates.append(cand_dict)       
-        
-#     for candidate in candidates:
-#         print(candidate.candidate_id)
-        # insrt = Candidates(
-    
-        #     active_through = candidate.active_through,
-        #     candidate_id = candidate.candidate_id,
-        #     candidate_inactive = candidate.candidate_inactive,
-        #     candidate_status = candidate.candidate_status,
-        #     cycles = candidate.cycles,
-        #     district = candidate.district,
-        #     district_number = candidate.district_number,
-        #     election_districts = candidate.election_districts,
-        #     election_years = candidate.election_years,
-        #     federal_funds_flag = candidate.federal_funds_flag,
-        #     first_file_date = candidate.first_file_date,
-        #     flags = candidate.flags,
-        #     has_raised_funds = candidate.has_raised_funds,
-        #     inactive_election_years = candidate.inactive_election_years,
-        #     incumbent_challenge = candidate.incumbent_challenge,
-        #     incumbent_challenge_full = candidate.incumbent_challenge_full,
-        #     last_f2_date = candidate.last_f2_date,
-        #     last_file_date = candidate.last_file_date,
-        #     load_date = candidate.load_date,
-        #     name = candidate.name,
-        #     office = candidate.office,
-        #     office_full = candidate.office_full,
-        #     party = candidate.party,
-        #     party_full = candidate.party_full,
-        #     state = candidate.state
-        # )
-        # try:
-        #     with Session(engine) as session:
-        #         session.add(insrt)    
-        #         session.commit()
-        #         session.close() 
-        # except IntegrityError as ie:
-        #     pass
-    
     
 
 if __name__ == "__main__":
