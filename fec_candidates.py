@@ -9,7 +9,7 @@ from dataclasses import dataclass, field, MISSING
 from typing import Optional, List, Union
 from datetime import date, datetime
 from dacite import from_dict
-from sqlmodel_model import Candidates
+from sqlmodel_model import Candidates, States
 from sqlmodel import Session, select, or_
 import db_connect as dbc
 from sqlalchemy.exc import IntegrityError
@@ -80,25 +80,33 @@ class Candidate:
 #     return load
 
 
-def get_request_params():
+def load_canidates_by_state(state):
     candidates = []
     page = 1 
     session = requests.Session() 
     # page=page 
     per_page = 20
-    state='NE'
-    params = {'page': page, 'state': state, 'api_key': FEC_API_KEY, 'sort_null_only': False, 'per_page': per_page, 'sort_hide_null': False }
+    # state='NE'
+    params = {'page': page, 'state': state, 'api_key': FEC_API_KEY, 'sort_null_only': False, 'per_page': per_page, 'sort_hide_null': False }    
     url = "https://api.open.fec.gov/v1/candidates/"                            
-    data = get_request(url=url, params=params)
-    pages = get_pagination(data=data).get("pages")
-    results = get_results(data=data)
+    request = FecRequest(url=url, params=params)
+    
+    # data = get_request(url=url, params=params)
+    # pages = get_pagination(data=data).get("pages")
+    # results = get_results(data=data)
+    pages = request.get_pages()
+    results = request.get_results()
     for y in results:
         cand_dict = from_dict(data_class=Candidate, data = y)
         candidates.append(cand_dict)     
     
     for page in range(2, pages + 1):
-        data = get_request(url=url, params=params)
-        results = get_results(data=data)
+        params = {'page': page, 'state': state, 'api_key': FEC_API_KEY, 'sort_null_only': False, 'per_page': per_page, 'sort_hide_null': False } 
+        request = FecRequest(url=url, params=params)
+        # data = get_request(url=url, params=params)
+        # results = get_results(data=data)
+        pages = request.get_pages()
+        results = request.get_results()        
         # cand_dict = from_dict(data_class=Candidate, data = results)
         # candidates.append(cand_dict)
         for y in results:
@@ -147,53 +155,60 @@ def get_request_params():
     # pprint.pprint(results)
     # return load
 
-def main():
-    data = get_request_data()
-    candidates = []
-    for y in data:
-        cand_dict = from_dict(data_class=Candidate, data = y)
-        candidates.append(cand_dict)       
+def select_states():
+    with Session(engine) as session:
+        statement = select(States)
+        results = session.exec(statement)
+    return results
+
+
+# def main():
+#     data = get_request_data()
+#     candidates = []
+#     for y in data:
+#         cand_dict = from_dict(data_class=Candidate, data = y)
+#         candidates.append(cand_dict)       
         
-    for candidate in candidates:
-        print(candidate.candidate_id)
-        insrt = Candidates(
+#     for candidate in candidates:
+#         print(candidate.candidate_id)
+#         insrt = Candidates(
     
-            active_through = candidate.active_through,
-            candidate_id = candidate.candidate_id,
-            candidate_inactive = candidate.candidate_inactive,
-            candidate_status = candidate.candidate_status,
-            cycles = candidate.cycles,
-            district = candidate.district,
-            district_number = candidate.district_number,
-            election_districts = candidate.election_districts,
-            election_years = candidate.election_years,
-            federal_funds_flag = candidate.federal_funds_flag,
-            first_file_date = candidate.first_file_date,
-            flags = candidate.flags,
-            has_raised_funds = candidate.has_raised_funds,
-            inactive_election_years = candidate.inactive_election_years,
-            incumbent_challenge = candidate.incumbent_challenge,
-            incumbent_challenge_full = candidate.incumbent_challenge_full,
-            last_f2_date = candidate.last_f2_date,
-            last_file_date = candidate.last_file_date,
-            load_date = candidate.load_date,
-            name = candidate.name,
-            office = candidate.office,
-            office_full = candidate.office_full,
-            party = candidate.party,
-            party_full = candidate.party_full,
-            state = candidate.state
-        )
-        try:
-            with Session(engine) as session:
-                session.add(insrt)    
-                session.commit()
-                session.close() 
-        except IntegrityError as ie:
-            pass
+#             active_through = candidate.active_through,
+#             candidate_id = candidate.candidate_id,
+#             candidate_inactive = candidate.candidate_inactive,
+#             candidate_status = candidate.candidate_status,
+#             cycles = candidate.cycles,
+#             district = candidate.district,
+#             district_number = candidate.district_number,
+#             election_districts = candidate.election_districts,
+#             election_years = candidate.election_years,
+#             federal_funds_flag = candidate.federal_funds_flag,
+#             first_file_date = candidate.first_file_date,
+#             flags = candidate.flags,
+#             has_raised_funds = candidate.has_raised_funds,
+#             inactive_election_years = candidate.inactive_election_years,
+#             incumbent_challenge = candidate.incumbent_challenge,
+#             incumbent_challenge_full = candidate.incumbent_challenge_full,
+#             last_f2_date = candidate.last_f2_date,
+#             last_file_date = candidate.last_file_date,
+#             load_date = candidate.load_date,
+#             name = candidate.name,
+#             office = candidate.office,
+#             office_full = candidate.office_full,
+#             party = candidate.party,
+#             party_full = candidate.party_full,
+#             state = candidate.state
+#         )
+#         try:
+#             with Session(engine) as session:
+#                 session.add(insrt)    
+#                 session.commit()
+#                 session.close() 
+#         except IntegrityError as ie:
+#             pass
     
     
 
 if __name__ == "__main__":
-    get_request_params()
+    load_canidates_by_state('NE')
     # print(engine)

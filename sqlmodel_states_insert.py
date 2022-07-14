@@ -162,9 +162,27 @@ class InsertStates:
         session.commit()
         session.close() 
 
-x = InsertStates()
-x.insert()
 
+
+
+
+def insert_states():
+    x = InsertStates()
+    x.insert()
+
+
+def select_states():
+    with Session(engine) as session:
+        statement = select(States)
+        results = session.exec(statement)
+    return results
+        
+if __name__ == "__main__": 
+    states = select_states()
+    # print(states)
+    for x in states:
+        print(x)
+    # print(len(states))       
 
 # "AK"	"Alaska"
 # "AL"	"Alabama"

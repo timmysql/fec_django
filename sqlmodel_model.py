@@ -123,6 +123,15 @@ class States(SQLModel, table=True):
     last_post_process_dt: datetime = None
     
 
-engine = dbc.get_postgres_config() 
 
-SQLModel.metadata.create_all(engine)  
+
+
+
+def create_tables():
+    
+    engine = dbc.get_postgres_config() 
+
+    SQLModel.metadata.create_all(engine)  
+
+if __name__ == "__main__":
+    create_tables()
