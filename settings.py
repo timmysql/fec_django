@@ -11,3 +11,9 @@ HOST = os.environ.get('host')
 DATABASE = os.environ.get('database')
 USER = os.environ.get('user')
 PASSWORD = os.environ.get('password')
+
+
+print(HOST)
+print(DATABASE)
+print(USER)
+print(PASSWORD)

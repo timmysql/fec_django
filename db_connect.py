@@ -13,6 +13,7 @@ def get_postgres_config():
         database = DATABASE
         engine_string = f"""postgresql+psycopg2://{user}:{password}@{host}/{database}"""
         # engine_string = get_postgres_settings()
+        print(engine_string)
         db_engine = create_engine(engine_string, isolation_level="AUTOCOMMIT")
     else:
         raise Exception('no HOST setting found.  Is your .env setup yet?')        
@@ -20,6 +21,10 @@ def get_postgres_config():
 
 
 if __name__ == "__main__":
-    print(get_postgres_config())
+    print(HOST)
+    print(DATABASE)
+    print(USER)
+    print(PASSWORD)
+    # print(get_postgres_config())
 
 

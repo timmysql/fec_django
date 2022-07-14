@@ -14,6 +14,9 @@ from sqlmodel import Session, select, or_
 import db_connect as dbc
 from sqlalchemy.exc import IntegrityError
 from settings import FEC_API_KEY
+from fec_requests import FecRequest
+
+
 engine = dbc.get_postgres_config()
 
 
@@ -49,39 +52,44 @@ class Candidate:
 
 
 
-nebraska_candidates = f"https://api.open.fec.gov/v1/candidates/?state=NE&sort_nulls_last=false&sort=name&api_key={FEC_API_KEY}&sort_null_only=false&page=1&per_page=20&sort_hide_null=false"
+# nebraska_candidates = f"https://api.open.fec.gov/v1/candidates/?state=NE&sort_nulls_last=false&sort=name&api_key={FEC_API_KEY}&sort_null_only=false&page=1&per_page=20&sort_hide_null=false"
 
-def get_request(url, page, per_page, state):
-    # url = "https://api.open.fec.gov/v1/candidates/"
-    session = requests.Session() 
-    r = session.get(url, params={'page': page, 'state': state, 'api_key': FEC_API_KEY, 'sort_null_only': False, 'per_page': per_page, 'sort_hide_null': False }).json()
-    return r
+# def get_request(url, params):
+#     # url = "https://api.open.fec.gov/v1/candidates/"
+#     session = requests.Session() 
+#     r = session.get(url, params=params).json()
+#     # r = session.get(url, params={'page': page, 'state': state, 'api_key': FEC_API_KEY, 'sort_null_only': False, 'per_page': per_page, 'sort_hide_null': False }).json()
+#     return r
 
-def get_pagination(data):    
-    dump = json.dumps(data.get("pagination"))
-    pagination = json.loads(dump)      
-    return pagination
+# def get_pagination(data):    
+#     dump = json.dumps(data.get("pagination"))
+#     pagination = json.loads(dump)      
+#     return pagination
  
-def get_results(data):
-    dump = json.dumps(data.get("results"))
-    results = json.loads(dump)    
-    return results   
+# def get_results(data):
+#     dump = json.dumps(data.get("results"))
+#     results = json.loads(dump)    
+#     return results   
 
-def get_request_data():    
-    search_get = nebraska_candidates
-    r = requests.get(search_get)                
-    data = r.json() 
-    dump = json.dumps(data.get("results"))
-    load = json.loads(dump)
-    return load
+# def get_request_data():    
+#     search_get = nebraska_candidates
+#     r = requests.get(search_get)                
+#     data = r.json() 
+#     dump = json.dumps(data.get("results"))
+#     load = json.loads(dump)
+#     return load
 
 
 def get_request_params():
     candidates = []
     page = 1 
     session = requests.Session() 
+    # page=page 
+    per_page = 20
+    state='NE'
+    params = {'page': page, 'state': state, 'api_key': FEC_API_KEY, 'sort_null_only': False, 'per_page': per_page, 'sort_hide_null': False }
     url = "https://api.open.fec.gov/v1/candidates/"                            
-    data = get_request(url=url, page=page, per_page = 20, state='NE')
+    data = get_request(url=url, params=params)
     pages = get_pagination(data=data).get("pages")
     results = get_results(data=data)
     for y in results:
@@ -89,7 +97,7 @@ def get_request_params():
         candidates.append(cand_dict)     
     
     for page in range(2, pages + 1):
-        data = get_request(url=url, page=page, per_page = 20, state='NE')
+        data = get_request(url=url, params=params)
         results = get_results(data=data)
         # cand_dict = from_dict(data_class=Candidate, data = results)
         # candidates.append(cand_dict)
@@ -188,3 +196,4 @@ def main():
 
 if __name__ == "__main__":
     get_request_params()
+    # print(engine)
