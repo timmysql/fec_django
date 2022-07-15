@@ -167,21 +167,28 @@ class InsertStates:
 
 
 def insert_states():
-    x = InsertStates()
-    x.insert()
+    states = select_states()    
+    if len(states) == 0:
+        x = InsertStates()
+        x.insert()
+        print("states inserted")
+    else:
+        print("no need to insert states, they already exist")
 
 
 def select_states():
     with Session(engine) as session:
         statement = select(States)
         results = session.exec(statement)
-    return results
+        result = results.fetchall()
+    return result
         
 if __name__ == "__main__": 
-    states = select_states()
-    # print(states)
-    for x in states:
-        print(x)
+    insert_states()
+    # states = select_states()
+    # print(len(states))
+    # for x in states:
+    #     print(x)
     # print(len(states))       
 
 # "AK"	"Alaska"
