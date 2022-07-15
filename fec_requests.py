@@ -1,6 +1,7 @@
 import requests
 import json
 from rich import inspect
+from settings import FEC_API_KEY
 
 class FecRequest:
     def __init__(self, url, params):
@@ -35,5 +36,12 @@ class FecRequest:
 
 
 if __name__ == "__main__": 
-    pass
+    page = 1 
+    per_page = 20
+    state='NE'
+    params = {'page': page, 'state': state, 'api_key': FEC_API_KEY, 'sort_null_only': False, 'per_page': per_page, 'sort_hide_null': False }    
+    url = "https://api.open.fec.gov/v1/candidates/"                            
+    request = FecRequest(url=url, params=params)
+    print(request.get_results())
+    print(request.get_pages())
 

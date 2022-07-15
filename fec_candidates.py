@@ -28,9 +28,9 @@ class Candidate:
     candidate_inactive: bool
     candidate_status: str
     cycles: List[int]
-    district: str
-    district_number: int
-    election_districts: List[str]
+    district: Optional[str]
+    district_number: Optional[int]
+    election_districts: Optional[List[str]] = field(default=None, init=False) 
     election_years: List[int]
     federal_funds_flag: bool
     first_file_date: Optional[str] = field(default=None, init=False) 
@@ -80,7 +80,7 @@ class Candidate:
 #     return load
 
 
-def load_canidates_by_state(state):
+def load_candidates_by_state(state):
     candidates = []
     page = 1 
     session = requests.Session() 
@@ -159,7 +159,8 @@ def select_states():
     with Session(engine) as session:
         statement = select(States)
         results = session.exec(statement)
-    return results
+        result = results.fetchall()
+    return result
 
 
 # def main():
@@ -210,5 +211,8 @@ def select_states():
     
 
 if __name__ == "__main__":
-    load_canidates_by_state('NE')
+    states = select_states()
+    for state in states:
+        print(state.state_abbr)
+        load_candidates_by_state(state.state_abbr)
     # print(engine)
